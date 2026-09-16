@@ -66,6 +66,7 @@ const updateCounts = () => {
   completedTasks.textContent = taskFilter("Completed").length;
 };
 
+
 const displayTasks = (taskArray) => {
   taskList.innerHTML = taskArray.map(function(task) {
     return `
@@ -103,10 +104,11 @@ const deleteTask = (id) => {
   if (index !== -1) {
     tasks.splice(index, 1);
   }
-
+  updateTagFilter();
   saveTasks();
   displayTasks(tasks);
   updateCounts();
+
 };
 
 const editTask = (id) => {
@@ -125,8 +127,17 @@ const editTask = (id) => {
   
 };
 
-addTaskBtnInput.addEventListener("click", function() {
+const updateTagFilter = () =>{
+  const allTags = tasks.flatMap(task => task.tags);
+  const uniqueTags = [...new Set(allTags)];
+  tagFilter.innerHTML = `<option value="">All Tags</option>`;
+  uniqueTags.forEach((tag)=>{
+    tagFilter.innerHTML += `<option value="${tag}">${tag}</option>`;
+  });
+};
 
+
+addTaskBtnInput.addEventListener("click", function() {
   if (
     taskIdInput.value === "" ||
     taskTitleInput.value === "" ||
@@ -169,12 +180,16 @@ addTaskBtnInput.addEventListener("click", function() {
         .map(tag => tag.trim())
     };
 
+
+
     tasks.push(newTask);
+    
   }
 
   saveTasks();
   displayTasks(tasks);
   updateCounts();
+  updateTagFilter();
 
   taskIdInput.value = "";
   taskTitleInput.value = "";
@@ -223,4 +238,5 @@ tagFilter.addEventListener("change", filterTasks);
 saveTasks();
 displayTasks(tasks);
 updateCounts();
+updateTagFilter();
 
